@@ -1,35 +1,88 @@
-# Capturador de Teclado em Rust
+# Keylogger em Rust
 
-Este projeto é um capturador de teclas (keylogger) simples implementado em Rust. Ele captura os eventos de pressionamento de teclas e grava os caracteres correspondentes em um arquivo de texto.
+## Descrição
+Este projeto é um keylogger avançado desenvolvido em Rust que utiliza a API do Windows para capturar e registrar todas as teclas pressionadas pelo usuário. O programa foi criado exclusivamente para fins educacionais e de pesquisa em segurança da informação.
 
-## Como Funciona
+## Características
 
-1. **Captura de Eventos**:
-   - O código utiliza a biblioteca `winapi` para registrar um hook global no teclado, permitindo que ele capture eventos de teclas pressionadas em todo o sistema.
+- **Mapeamento completo de teclas**: Suporte para caracteres especiais, teclas de função e modificadores
+- **Rastreamento de janelas**: Registra o título da janela ativa durante a captura de teclas
+- **Registro com timestamp**: Adiciona data e hora a cada evento para análise cronológica
+- **Sistema de buffer inteligente**: Minimiza operações de I/O de disco para melhor desempenho
+- **Suporte a teclas modificadoras**: Interpretação correta de Shift, Ctrl, Alt e Caps Lock
+- **Encerramento seguro**: Manipulação adequada do encerramento com suporte para Ctrl+C
+- **Tratamento de erros robusto**: Gerenciamento adequado de erros em todo o código
+- **Eficiência de memória**: Uso otimizado de recursos do sistema
 
-2. **Thread de Captura**:
-   - O programa cria uma thread que escuta os eventos de teclado. Quando uma tecla é pressionada, o código obtém seu código virtual (VK code) e o envia para uma fila usando um canal (`mpsc`).
+## Requisitos
 
-3. **Thread de Escrita**:
-   - Outra thread é responsável por receber os códigos das teclas da fila e convertê-los em caracteres. Os caracteres são escritos em um arquivo chamado `capturar.txt`.
-
-4. **Códigos de Tecla**:
-   - O código converte os códigos virtuais das teclas em caracteres legíveis, incluindo letras (A-Z), números (0-9), espaços e a tecla Enter, que é convertida em uma nova linha.
+- Rust 1.50 ou superior
+- Sistema operacional Windows (7/8/10/11)
+- Privilégios de administrador (para instalação dos hooks de teclado)
 
 ## Dependências
 
-O projeto utiliza as seguintes dependências:
+```toml
+[dependencies]
+winapi = { version = "0.3", features = ["winuser", "minwindef", "libloaderapi", "processthreadsapi"] }
+lazy_static = "1.4"
+chrono = "0.4"
+ctrlc = "3.2"
+```
 
-- `winapi`: Para interagir com a API do Windows.
-- `lazy_static`: Para permitir a inicialização de variáveis globais de forma segura.
+## Instalação
 
-## Como Compilar e Executar
+1. Clone este repositório:
+```
+git clone https://github.com/seu-usuario/keylogger_rust.git
+cd keylogger_rust
+```
 
-1. Certifique-se de ter o Rust e o Cargo instalados.
-2. Clone o repositório ou crie um novo projeto com o código fornecido.
-3. Adicione as seguintes dependências ao seu `Cargo.toml`:
+2. Compile o projeto:
+```
+cargo build --release
+```
 
-   ```toml
-   [dependencies]
-   winapi = { version = "0.3", features = ["winuser", "libloaderapi"] }
-   lazy_static = "1.4"
+3. Execute o programa:
+```
+cargo run --release
+```
+
+## Uso
+
+Após a execução, o programa irá:
+1. Iniciar a captura de teclas em segundo plano
+2. Registrar as teclas pressionadas em um arquivo chamado `keylog.txt`
+3. Organizar os logs por aplicativo/janela com carimbos de data/hora
+
+Para encerrar o keylogger, pressione Ctrl+C no terminal onde ele foi iniciado.
+
+## Formato do Log
+
+O arquivo de log será formatado da seguinte maneira:
+
+```
+--- Logging started at 2025-03-19 14:30:45 ---
+
+[2025-03-19 14:30:50] Window: Navegador Chrome
+google.com[ENTER]
+
+[2025-03-19 14:31:15] Window: Microsoft Word
+Este é um texto de exemplo[SHIFT].[ENTER]
+```
+
+## Aviso Legal
+
+**IMPORTANTE**: Este software foi desenvolvido EXCLUSIVAMENTE para fins educacionais e de pesquisa em segurança da informação. O uso deste programa para capturar dados de teclado sem o consentimento explícito do usuário é ilegal em muitas jurisdições e antiético em todas as circunstâncias.
+
+O autor não assume responsabilidade pelo uso indevido deste software. Ao utilizar este código, você concorda em:
+
+1. Só executar este software em sistemas em que você tenha permissão explícita
+2. Informar todos os usuários que suas entradas de teclado estão sendo registradas
+3. Cumprir todas as leis e regulamentos aplicáveis sobre privacidade e segurança de dados
+
+O uso deste software para espionagem, coleta não autorizada de informações, roubo de dados ou qualquer outra atividade maliciosa é expressamente desencorajado e pode resultar em consequências legais severas.
+
+## Licença
+
+Este projeto está licenciado sob a [MIT License](LICENSE).
