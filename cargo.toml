@@ -4,5 +4,7 @@ version = "0.1.0"
 edition = "2018"
 
 [dependencies]
-winapi = { version = "0.3", features = ["winuser", "libloaderapi"] }
+winapi = { version = "0.3", features = ["winuser", "minwindef", "libloaderapi", "processthreadsapi"] }
 lazy_static = "1.4"
+chrono = "0.4"
+ctrlc = "3.2"
